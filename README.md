@@ -3,6 +3,57 @@
 [Passport](https://github.com/jaredhanson/passport) strategy for authenticating
 with picplz using the OAuth 2.0 API.
 
+## Installation
+
+    $ npm install passport-picplz
+
+## Usage
+
+#### Configure Strategy
+
+The picplz authentication strategy authenticates users using a picplz account
+and OAuth 2.0 tokens.  The strategy requires a `verify` callback, which accepts
+these credentials and calls `done` providing a user, as well as `options`
+specifying a client ID, client secret, and callback URL.
+
+    passport.use(new PicplzStrategy({
+        clientID: PICPLZ_OAUTH2_KEY,
+        clientSecret: PICPLZ_OAUTH2_SECRET,
+        callbackURL: "http://127.0.0.1:3000/auth/picplz/callback"
+      },
+      function(accessToken, refreshToken, profile, done) {
+        User.findOrCreate({ picplzId: profile.id }, function (err, user) {
+          return done(err, user);
+        });
+      }
+    ));
+
+#### Authenticate Requests
+
+Use `passport.authenticate()`, specifying the `'picplz'` strategy, to
+authenticate requests.
+
+For example, as route middleware in an [Express](http://expressjs.com/)
+application:
+
+    app.get('/auth/picplz',
+      passport.authenticate('picplz'),
+      function(req, res){
+        // The request will be redirected to picplz for authentication, so this
+        // function will not be called.
+      });
+
+    app.get('/auth/picplz/callback', 
+      passport.authenticate('picplz', { failureRedirect: '/login' }),
+      function(req, res) {
+        // Successful authentication, redirect home.
+        res.redirect('/');
+      });
+
+#### Examples
+
+For a complete, working example, refer to the [login example](https://github.com/jaredhanson/passport-picplz/tree/master/examples/login).
+
 ## Credits
 
   - [Jared Hanson](http://github.com/jaredhanson)
