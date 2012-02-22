@@ -29,7 +29,7 @@ vows.describe('PicplzStrategy').addBatch({
       function() {});
       
       // mock
-      strategy._oauth2.getProtectedResource = function(url, accessToken, callback) {
+      strategy._oauth2.get = function(url, accessToken, callback) {
         var body = '{ "result": "ok", "value": { "users": [ { "username": "waterbuffalo", "display_name": "Waterbuffalo", "following_count": 36, "follower_count": 139, "id": 1908, "icon": { "url": "http://a2.picplzthumbs.com/i/FwCNRNyPZJGlqJMyQXwM2wgQ_k4.png", "width": 100, "height": 100 } } ] } }';
         
         callback(null, body, undefined);
@@ -59,6 +59,12 @@ vows.describe('PicplzStrategy').addBatch({
         assert.equal(profile.username, 'waterbuffalo');
         assert.equal(profile.displayName, 'Waterbuffalo');
       },
+      'should set raw property' : function(err, profile) {
+        assert.isString(profile._raw);
+      },
+      'should set json property' : function(err, profile) {
+        assert.isObject(profile._json);
+      },
     },
   },
   
@@ -71,7 +77,7 @@ vows.describe('PicplzStrategy').addBatch({
       function() {});
       
       // mock
-      strategy._oauth2.getProtectedResource = function(url, accessToken, callback) {
+      strategy._oauth2.get = function(url, accessToken, callback) {
         callback(new Error('something-went-wrong'));
       }
       
